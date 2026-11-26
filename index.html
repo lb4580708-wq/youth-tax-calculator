@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중소기업 청년 소득세 감면 계산기 | 2026년 귀속</title>
+<meta name="description" content="연봉과 비과세 항목만 넣으면 2026년 귀속 중소기업 취업자 소득세 감면(청년 90%, 연 200만 원 한도)까지 반영해 실제로 덜 내는 소득세를 계산합니다.">
+<meta property="og:title" content="중소기업 청년 소득세 감면 계산기 (2026년 귀속)">
+<meta property="og:description" content="비과세·근로소득공제·근로소득세액공제·감면까지 반영한 예상 소득세를 바로 확인하세요.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FCF7EF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23D9763C'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E2%82%A9%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#FCF7EF;
+    --card:#FFFDFA;
+    --ink:#2B2621;
+    --sub:#6F6459;
+    --line:#E8DDCD;
+    --accent:#D9763C;
+    --accent-deep:#B95C28;
+    --accent-soft:#FBEBDD;
+    --green:#4C6A52;
+    --green-soft:#EDF2E9;
+    --warn:#A6552E;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 520px at 82% -8%, #FDEFE0 0%, rgba(253,239,224,0) 62%),
+      radial-gradient(800px 420px at 4% 8%, #EFF3EA 0%, rgba(239,243,234,0) 58%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    line-height:1.6;
+    letter-spacing:-0.01em;
+    word-break:keep-all;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 18px 64px}
+  header{padding:8px 4px 26px}
+  .badge{
+    display:inline-block;margin:0 0 14px;padding:5px 12px;border-radius:999px;
+    background:#fff;border:1px solid var(--line);
+    font-size:.78rem;font-weight:600;color:var(--sub);letter-spacing:0;
+  }
+  h1{
+    margin:0 0 12px;font-size:clamp(1.72rem,5.4vw,2.5rem);line-height:1.24;letter-spacing:-0.035em;font-weight:800;
+  }
+  h1 .mark{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8c14-6 28 4 42-2s30 3 44-2 24 3 30 0' fill='none' stroke='%23D9763C' stroke-width='3.4' stroke-linecap='round' opacity='0.55'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:0 1.02em;background-size:100% .42em;
+    padding-bottom:.18em;
+  }
+  .lede{margin:0;max-width:40em;color:var(--sub);font-size:.98rem}
+  .grid{display:grid;gap:18px}
+  @media (min-width:900px){
+    .grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:start}
+    .result{position:sticky;top:18px}
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 18px 40px -34px rgba(90,64,40,.55), 0 2px 0 #fff inset;
+    padding:22px;
+  }
+  @media (min-width:640px){ .card{padding:26px} }
+  .panel{display:grid;gap:26px}
+  .sec-title{
+    display:flex;align-items:center;gap:9px;margin:0 0 14px;font-size:1rem;font-weight:700;letter-spacing:-0.02em;
+  }
+  .sec-title .num{
+    flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;border-radius:8px;
+    background:var(--accent-soft);color:var(--accent-deep);font-size:.76rem;font-weight:800;
+  }
+  .field + .field{margin-top:16px}
+  .field label{display:block;font-size:.93rem;font-weight:650;margin-bottom:6px}
+  .field .hint{margin:6px 0 0;font-size:.8rem;line-height:1.55;color:var(--sub)}
+  .limit{font-weight:600;color:var(--accent-deep);font-size:.78rem;background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-left:2px}
+
+  .seg{display:inline-flex;gap:4px;padding:4px;background:#F6EFE4;border-radius:12px;margin-bottom:14px}
+  .seg button{
+    appearance:none;border:0;background:transparent;border-radius:9px;padding:7px 16px;
+    font:inherit;font-size:.87rem;font-weight:650;color:var(--sub);cursor:pointer;transition:.16s;
+  }
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(90,64,40,.16)}
+
+  .money{
+    display:flex;align-items:center;gap:10px;padding:11px 14px;border:1.5px solid var(--line);
+    border-radius:14px;background:#fff;transition:border-color .16s, box-shadow .16s;
+  }
+  .money:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(217,118,60,.12)}
+  .money input{
+    flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;font:inherit;
+    font-size:1.2rem;font-weight:700;letter-spacing:-0.02em;color:var(--ink);text-align:right;
+  }
+  .money .unit{flex:0 0 auto;font-size:.85rem;color:var(--sub)}
+  .money.small input{font-size:1rem;font-weight:650}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .chips button{
+    appearance:none;cursor:pointer;font:inherit;font-size:.79rem;font-weight:600;color:var(--sub);
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;
+  }
+  .chips button:hover{border-color:var(--accent);color:var(--accent-deep)}
+
+  .warn{margin:7px 0 0;font-size:.79rem;color:var(--warn);display:none}
+  .warn.on{display:block}
+
+  .types{display:grid;gap:10px}
+  .type{
+    display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;
+    padding:13px 15px;border:1.5px solid var(--line);border-radius:15px;background:#fff;cursor:pointer;transition:.16s;
+  }
+  .type:hover{border-color:#DCC4AC}
+  .type input{margin:3px 0 0;accent-color:var(--accent);width:16px;height:16px}
+  .type .t{font-size:.92rem;font-weight:700}
+  .type .d{font-size:.79rem;color:var(--sub);line-height:1.5}
+  .type:has(input:checked){border-color:var(--accent);background:#FFF8F2}
+
+  .switch{display:flex;gap:12px;align-items:flex-start;margin-top:2px;padding-top:16px;border-top:1px dashed var(--line)}
+  .switch input{margin:4px 0 0;width:16px;height:16px;accent-color:var(--green)}
+  .switch .t{font-size:.89rem;font-weight:650}
+  .switch .d{font-size:.79rem;color:var(--sub);line-height:1.5}
+
+  /* 결과 */
+  .result{background:linear-gradient(180deg,#FFFDFA 0%,#FFF8F0 100%);padding:24px}
+  .r-top{font-size:.82rem;font-weight:650;color:var(--sub);margin:0}
+  .big{
+    margin:2px 0 0;font-size:clamp(1.9rem,7vw,2.45rem);font-weight:800;letter-spacing:-0.045em;line-height:1.15;
+    font-variant-numeric:tabular-nums;
+  }
+  .big .won{font-size:.55em;font-weight:700;color:var(--sub);margin-left:3px;letter-spacing:0}
+  .r-sub{margin:6px 0 0;font-size:.79rem;color:var(--sub)}
+  .rows{display:grid;gap:0;margin:18px 0 0;padding:0}
+  .rows .row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-top:1px solid #F0E6D8}
+  .rows dt{margin:0;font-size:.85rem;color:var(--sub);font-weight:600}
+  .rows dd{margin:0;font-size:1.02rem;font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+  .rows .row.minus dd{color:var(--green)}
+  .rows .row.total dd{color:var(--accent-deep)}
+  .rows .note{display:block;font-size:.73rem;font-weight:500;color:#9C8F82;margin-top:2px;letter-spacing:0}
+  .final{
+    margin:16px 0 0;padding:17px 18px;border-radius:17px;
+    background:linear-gradient(135deg,#2F3B31 0%,#3C4B3E 100%);
+    color:#F6F3EA;box-shadow:0 14px 26px -22px rgba(47,59,49,.9);
+  }
+  .final .l{font-size:.79rem;color:#CBD6C8;margin:0}
+  .final .v{margin:2px 0 0;font-size:clamp(1.7rem,6.2vw,2.1rem);font-weight:800;letter-spacing:-0.04em;line-height:1.15;font-variant-numeric:tabular-nums}
+  .final .v .won{font-size:.55em;font-weight:700;color:#B9C7B6;margin-left:3px;letter-spacing:0}
+  .final .s{margin:5px 0 0;font-size:.75rem;color:#B9C7B6}
+  .callout{
+    margin:14px 0 0;padding:12px 14px;border-radius:13px;background:#fff;border:1px dashed #E2CFB8;
+    font-size:.79rem;line-height:1.6;color:#6B5C4E;
+  }
+  .callout strong{color:var(--accent-deep)}
+
+  /* 상세 */
+  .detail{margin-top:18px}
+  details{border-radius:18px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+  summary{
+    cursor:pointer;list-style:none;padding:16px 20px;font-size:.9rem;font-weight:700;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary .caret{transition:.2s;color:var(--sub);font-size:.8rem}
+  details[open] summary .caret{transform:rotate(180deg)}
+  .dtable{width:100%;border-collapse:collapse;font-size:.84rem}
+  .dtable th,.dtable td{padding:9px 20px;text-align:left;border-top:1px solid #F2E9DC;vertical-align:top}
+  .dtable th{font-weight:600;color:var(--sub);width:58%}
+  .dtable td{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .dtable tr.sum th,.dtable tr.sum td{font-weight:800;background:#FFFBF5}
+  .dtable tr.minus td{color:var(--green)}
+  .dtable .src{display:block;font-size:.72rem;color:#9C8F82;font-weight:500;margin-top:1px}
+
+  /* 유의사항 */
+  .notes{margin-top:26px;display:grid;gap:12px}
+  @media (min-width:760px){ .notes{grid-template-columns:1fr 1fr} }
+  .note-card{padding:18px 20px;border-radius:18px;background:#fff;border:1px solid var(--line)}
+  .note-card h3{margin:0 0 7px;font-size:.92rem;font-weight:750;display:flex;gap:8px;align-items:center}
+  .note-card h3 .ico{font-size:1rem}
+  .note-card p{margin:0;font-size:.82rem;line-height:1.65;color:#5C5147}
+  .note-card a{color:var(--accent-deep);font-weight:650;text-underline-offset:2px}
+  .basis{margin-top:22px;padding:18px 20px;border-radius:18px;background:var(--green-soft);border:1px solid #DDE6D7}
+  .basis h3{margin:0 0 8px;font-size:.9rem;font-weight:750;color:var(--green)}
+  .basis ul{margin:0;padding-left:18px;font-size:.79rem;line-height:1.7;color:#4E5B4C}
+  .basis a{color:#3E5A44}
+  footer{margin-top:30px;padding:20px 4px;border-top:1px solid var(--line);font-size:.76rem;color:#8B7F73;line-height:1.7}
+  footer b{color:#6B5C4E}
+  :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:6px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="badge">2026년 귀속 · 연말정산 기준</p>
+    <h1>중소기업 청년<br><span class="mark">소득세 감면</span> 계산기</h1>
+    <p class="lede">연봉이랑 비과세 항목만 넣으면, 비과세·근로소득공제·세액공제를 거쳐 <b>중소기업 소득세 감면(청년 90%, 연 200만 원 한도)</b>까지 반영한 예상 소득세를 바로 보여줘요.</p>
+  </header>
+
+  <main class="grid">
+
+    <!-- ===== 입력 ===== -->
+    <section class="card panel" aria-label="입력">
+
+      <div>
+        <h2 class="sec-title"><span class="num">1</span>급여 입력</h2>
+        <div class="seg" role="group" aria-label="급여 입력 단위">
+          <button type="button" id="btnAnnual" data-mode="annual" aria-pressed="true">연봉</button>
+          <button type="button" id="btnMonthly" data-mode="monthly" aria-pressed="false">월급</button>
+        </div>
+        <div class="field">
+          <label for="income" id="incomeLabel">연봉 (세전, 비과세 포함)</label>
+          <div class="money">
+            <input id="income" type="text" inputmode="numeric" autocomplete="off" value="3,600" aria-describedby="incomeHint">
+            <span class="unit">만원</span>
+          </div>
+          <div class="chips" id="incomeChips"></div>
+          <p class="hint" id="incomeHint">계약서에 적힌 연봉 총액이에요. 비과세로 받는 식대·보조금도 이 안에 포함해서 넣어 주세요.</p>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="sec-title"><span class="num">2</span>비과세 항목 (월 기준)</h2>
+
+        <div class="field">
+          <label for="meal">식대 <span class="limit">월 20만 원까지</span></label>
+          <div class="money small">
+            <input id="meal" type="text" inputmode="numeric" autocomplete="off" value="20" aria-describedby="mealHint">
+            <span class="unit">만원 / 월</span>
+          </div>
+          <p class="hint" id="mealHint">회사가 밥을 따로 안 주고 식대를 현금으로 줄 때, 월 20만 원까지는 세금이 안 붙어요. 구내식당을 쓰면서 식대도 받으면 현금 식대는 전부 과세예요.</p>
+          <p class="warn" id="mealWarn"></p>
+        </div>
+
+        <div class="field">
+          <label for="drive">자가운전보조금 <span class="limit">월 20만 원까지</span></label>
+          <div class="money small">
+            <input id="drive" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="driveHint">
+            <span class="unit">만원 / 월</span>
+          </div>
+          <p class="hint" id="driveHint">내 차(본인 또는 부부 공동명의)로 회사 업무를 다니면서, 출장비 실비 대신 회사 규정에 따라 받는 돈. 월 20만 원까지 비과세예요.</p>
+          <p class="warn" id="driveWarn"></p>
+        </div>
+
+        <div class="field">
+          <label for="care">출산·보육수당 <span class="limit">자녀 1명당 월 20만 원</span></label>
+          <div class="money small">
+            <input id="care" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="careHint">
+            <span class="unit">만원 / 월</span>
+          </div>
+          <p class="hint" id="careHint">6세 이하 자녀 보육비로 회사에서 받는 수당. 2026년 1월부터는 자녀 1명당 월 20만 원까지 비과세라, 자녀가 둘이면 40만 원까지 됩니다.
+            <label for="kids" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:.78rem;font-weight:600;color:var(--sub)">6세 이하 자녀 수
+              <select id="kids" style="font:inherit;font-size:.78rem;padding:3px 6px;border-radius:8px;border:1px solid var(--line);background:#fff">
+                <option value="1" selected>1명</option>
+                <option value="2">2명</option>
+                <option value="3">3명</option>
+              </select>
+            </label>
+          </p>
+          <p class="warn" id="careWarn"></p>
+        </div>
+
+        <div class="field">
+          <label for="other">기타 비과세 (연간)</label>
+          <div class="money small">
+            <input id="other" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="otherHint">
+            <span class="unit">만원 / 년</span>
+          </div>
+          <p class="hint" id="otherHint">생산직 연장근로수당, 연구보조비, 육아휴직급여처럼 위 항목에 없는 비과세를 1년 합계로 넣어 주세요.</p>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="sec-title"><span class="num">3</span>감면 유형</h2>
+        <div class="types">
+          <label class="type">
+            <input type="radio" name="type" value="youth" checked>
+            <span>
+              <span class="t">중소기업 취업 청년 — 90%</span>
+              <span class="d">근로계약일 기준 15~34세(군 복무는 최대 6년 차감). 취업일부터 5년, 연 200만 원 한도</span>
+            </span>
+          </label>
+          <label class="type">
+            <input type="radio" name="type" value="other">
+            <span>
+              <span class="t">그 외 — 70%</span>
+              <span class="d">60세 이상 · 장애인 · 경력단절 근로자. 취업일부터 3년, 연 200만 원 한도</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="switch">
+          <input type="checkbox" id="useInsurance" checked>
+          <label for="useInsurance" style="cursor:pointer">
+            <span class="t">4대보험료 소득공제 반영</span>
+            <span class="d">국민연금·건강보험·장기요양·고용보험 근로자 부담분(2026년 9.7174%)을 소득공제에 넣습니다. 실제 고지액과는 몇백 원 차이가 날 수 있어요. 빼면 세금이 조금 더 높게 나옵니다.</span>
+          </label>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== 결과 ===== -->
+    <aside class="card result" id="resultCard" aria-live="polite" aria-label="계산 결과">
+      <p class="r-top">비과세 제외 과세 대상 총급여 (연)</p>
+      <p class="big"><span id="rGross">33,600,000</span><span class="won">원</span></p>
+      <p class="r-sub" id="rGrossSub">비과세 2,400,000원 제외 · 월 평균 2,800,000원</p>
+
+      <dl class="rows">
+        <div class="row">
+          <dt>예상 결정세액 <span class="note">감면 적용 전 · 근로소득세액공제·표준세액공제 반영</span></dt>
+          <dd id="rDecision">656,400원</dd>
+        </div>
+        <div class="row minus">
+          <dt>소득세 감면 예상액 <span class="note" id="rReductionNote">산출세액의 90% · 연 200만 원 한도</span></dt>
+          <dd id="rReduction">−1,369,440원</dd>
+        </div>
+      </dl>
+
+      <div class="final">
+        <p class="l">감면 후 최종 예상 소득세</p>
+        <p class="v"><span id="rFinal">0</span><span class="won">원</span></p>
+        <p class="s" id="rFinalSub">지방소득세까지 포함하면 0원</p>
+      </div>
+
+      <dl class="rows">
+        <div class="row">
+          <dt>지방소득세 절감 예상액 <span class="note">소득세 절감액의 10%</span></dt>
+          <dd id="rLocal">65,640원</dd>
+        </div>
+        <div class="row total">
+          <dt>실제로 덜 내는 세금 <span class="note">소득세 + 지방소득세</span></dt>
+          <dd id="rSaved">722,040원</dd>
+        </div>
+      </dl>
+
+      <p class="callout" id="noteFinal"></p>
+    </aside>
+  </main>
+
+  <!-- ===== 상세 ===== -->
+  <div class="detail">
+    <details id="detailBox">
+      <summary>계산 과정 자세히 보기 <span class="caret">▾</span></summary>
+      <table class="dtable">
+        <tbody id="detailBody"></tbody>
+      </table>
+    </details>
+  </div>
+
+  <!-- ===== 유의사항 ===== -->
+  <section class="notes" aria-label="실무 유의사항">
+    <div class="note-card">
+      <h3><span class="ico">①</span>비과세는 '이중 혜택'이 아니에요</h3>
+      <p>식대 20만 원을 비과세로 받으면 그만큼 세금이 줄지만, <b>총급여 자체가 줄어서</b> 신용카드 공제의 최저사용금액(총급여의 25%)과 연금계좌 세액공제율 기준선도 같이 내려가요. 카드·의료비 공제를 많이 받는 사람은 비과세를 늘렸을 때 돌려받는 세금이 오히려 줄 수도 있으니, 두 가지를 같이 놓고 봐야 합니다.</p>
+    </div>
+    <div class="note-card">
+      <h3><span class="ico">②</span>결정세액 0원 구간이 있어요</h3>
+      <p>연봉 3,000만~3,600만 원대 청년은 감면을 받으면 결정세액이 <b>0원</b>이 되는 경우가 많아요(위 계산기에서도 확인됩니다). 0원이 되면 카드·의료비·월세 세액공제를 더 챙겨도 환급이 늘지 않으니, 그 공제는 감면을 받지 않는 배우자·부모 쪽으로 몰아주는 게 유리합니다. 감면은 본인 근로소득에만 적용돼서 넘길 수 없어요.</p>
+    </div>
+    <div class="note-card">
+      <h3><span class="ico">③</span>이직하면 새 회사에 다시 신청</h3>
+      <p>감면은 자동으로 넘어가지 않아요. 새 회사에 <b>중소기업 취업자 소득세 감면신청서</b>를 <b>취업일이 속한 달의 다음 달 말일</b>까지 내야 하고, 회사는 신청받은 달의 다음 달 10일까지 세무서에 명세서를 냅니다. 5년은 회사마다 새로 주는 게 아니라 <b>처음 감면받은 취업일부터 통산</b>이고, 쉬었던 기간도 그대로 흘러요.</p>
+    </div>
+    <div class="note-card">
+      <h3><span class="ico">④</span>공식 안내로 한 번 더 확인</h3>
+      <p>회사가 감면 대상 업종인지, 내가 대상자인지는 결국 회사와 세무서가 판단해요. <a href="https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=239023" target="_blank" rel="noopener">국세청 중소기업 취업자 소득세 감면 안내</a>와 <a href="https://www.hometax.go.kr" target="_blank" rel="noopener">홈택스</a> 연말정산 미리보기에서 내 원천징수영수증 기준 금액을 확인해 보세요. 상담은 국세상담센터 126.</p>
+    </div>
+  </section>
+
+  <section class="basis">
+    <h3>이 계산기가 쓰는 기준 (2026년 귀속)</h3>
+    <ul>
+      <li><b>근로소득공제</b> — 소득세법 제47조 (총급여 500만 원까지 70% … 1억 원 초과분 2%, 한도 2,000만 원)</li>
+      <li><b>기본공제</b> — 본인 1명 150만 원만 반영 (배우자·부양가족·연금보험료 등은 미반영)</li>
+      <li><b>세율</b> — 6% / 15% / 24% / 35% / 38% / 40% / 42% / 45% (과세표준 1,400만·5,000만·8,800만·1.5억·3억·5억·10억 원 구간)</li>
+      <li><b>근로소득세액공제</b> — 소득세법 제59조 (산출세액 130만 원까지 55%, 초과분 30% · 총급여별 한도 74만~20만 원)</li>
+      <li><b>표준세액공제</b> — 13만 원 (특별소득공제·특별세액공제를 신청하지 않은 경우)</li>
+      <li><b>중소기업 취업자 감면</b> — 조세특례제한법 제30조·시행령 제27조. 감면세액 = 산출세액 × 90%(또는 70%), 연 200만 원 한도. 감면을 받으면 근로소득세액공제도 <b>감면 비율만큼 줄어</b> 실제 절감액은 감면세액보다 작아집니다.</li>
+      <li><b>지방소득세</b> — 소득세 결정세액의 10%</li>
+    </ul>
+  </section>
+
+  <footer>
+    <b>김쿼카의 이것저것</b> · 2026년 11월 기준 세법으로 만든 참고용 계산기입니다.<br>
+    카드·의료비·월세·보험료 공제, 부양가족, 중도 입사·이직한 해의 급여 비율 등 개인별 사정은 반영하지 않아요. 실제 세액은 회사 급여 담당자나 홈택스 연말정산 미리보기, 국세상담센터(126)에서 확인하세요.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- 2026년 귀속 세액 계산 (순수 함수) ---------- */
+
+  // 근로소득공제 (소득세법 제47조)
+  function earnedIncomeDeduction(gross) {
+    if (gross <= 0) return 0;
+    var d;
+    if (gross <= 5000000) d = gross * 0.7;
+    else if (gross <= 15000000) d = 3500000 + (gross - 5000000) * 0.4;
+    else if (gross <= 45000000) d = 7500000 + (gross - 15000000) * 0.15;
+    else if (gross <= 100000000) d = 12000000 + (gross - 45000000) * 0.05;
+    else d = 14750000 + (gross - 100000000) * 0.02;
+    if (d > 20000000) d = 20000000;
+    return Math.min(d, gross);
+  }
+
+  // 기본세율 (소득세법 제55조): 과세표준 × 세율 − 누진공제
+  var BRACKETS = [
+    [14000000, 0.06, 0],
+    [50000000, 0.15, 1260000],
+    [88000000, 0.24, 5760000],
+    [150000000, 0.35, 15440000],
+    [300000000, 0.38, 19940000],
+    [500000000, 0.40, 25940000],
+    [1000000000, 0.42, 35940000],
+    [Infinity, 0.45, 65940000]
+  ];
+  function taxOn(base) {
+    if (base <= 0) return 0;
+    for (var i = 0; i < BRACKETS.length; i++) {
+      if (base <= BRACKETS[i][0]) return base * BRACKETS[i][1] - BRACKETS[i][2];
+    }
+    return 0;
+  }
+
+  // 근로소득세액공제 (소득세법 제59조): 공제액과 총급여별 한도
+  function wageCreditRaw(san) {
+    if (san <= 0) return 0;
+    return san <= 1300000 ? san * 0.55 : 715000 + (san - 1300000) * 0.3;
+  }
+  function wageCreditLimit(gross) {
+    if (gross <= 33000000) return 740000;
+    if (gross <= 70000000) return Math.max(660000, 740000 - (gross - 33000000) * 0.008);
+    if (gross <= 120000000) return Math.max(500000, 660000 - (gross - 70000000) * 0.5);
+    return Math.max(200000, 500000 - (gross - 120000000) * 0.5);
+  }
+
+  // 4대보험료 근로자 부담 (2026년: 연금 4.75% · 건보 3.595% · 장기요양 건보료의 13.14% · 고용 0.9%)
+  var PENSION_CAP_MONTHLY = 6590000;
+  function insurancePremiums(taxableGross, include) {
+    if (!include || taxableGross <= 0) return { pension: 0, health: 0, ltc: 0, employ: 0, total: 0 };
+    var pensionBase = Math.min(taxableGross, PENSION_CAP_MONTHLY * 12);
+    var pension = Math.floor(pensionBase * 0.0475);
+    var health = Math.floor(taxableGross * 0.03595);
+    var ltc = Math.floor(health * 0.1314);
+    var employ = Math.floor(taxableGross * 0.009);
+    return { pension: pension, health: health, ltc: ltc, employ: employ, total: pension + health + ltc + employ };
+  }
+
+  var REDUCTION_CAP = 2000000;   // 과세기간별 200만 원
+  var BASIC_DEDUCTION = 1500000; // 본인 기본공제
+  var STANDARD_CREDIT = 130000;  // 표준세액공제
+
+  /**
+   * @param {{annualGross:number, nontaxAnnual:number, rate:number, includeInsurance:boolean}} input
+   */
+  function compute(input) {
+    var gross = Math.max(0, Math.round(input.annualGross || 0));
+    var nontax = Math.max(0, Math.round(input.nontaxAnnual || 0));
+    if (nontax > gross) nontax = gross;
+    var rate = input.rate;
+
+    var taxableGross = gross - nontax;                               // 과세 대상 총급여
+    var earnedDeduction = earnedIncomeDeduction(taxableGross);       // 근로소득공제
+    var wageIncome = taxableGross - earnedDeduction;                 // 근로소득금액
+    var ins = insurancePremiums(taxableGross, input.includeInsurance);
+    var incomeDeductions = ins.total + BASIC_DEDUCTION;              // 소득공제 계
+    var taxBase = Math.max(0, wageIncome - incomeDeductions);
+    taxBase = Math.floor(taxBase / 1000) * 1000;                     // 과세표준 1천 원 미만 절사
+
+    var san = Math.max(0, Math.floor(taxOn(taxBase)));               // 산출세액
+
+    // 중소기업 취업자 소득세 감면: 산출세액 × 감면율, 연 200만 원 한도
+    var reductionBeforeCap = Math.floor(san * rate);
+    var reduction = Math.min(reductionBeforeCap, REDUCTION_CAP);
+    var cappedByLimit = reductionBeforeCap > REDUCTION_CAP;
+
+    // 근로소득세액공제: 한도 적용 후, 감면 비율만큼 줄임 (조특법 시행령 제27조⑨)
+    var creditNormal = Math.min(Math.floor(wageCreditRaw(san)), Math.floor(wageCreditLimit(taxableGross)));
+    var creditAdjusted = san > 0 ? Math.floor(creditNormal * (1 - reduction / san)) : 0;
+
+    // 표준세액공제는 남은 세액까지만
+    var afterReduction = Math.max(0, san - reduction - creditAdjusted);
+    var standardCredit = Math.min(STANDARD_CREDIT, afterReduction);
+
+    var decision = Math.max(0, afterReduction - standardCredit);     // 결정세액 (감면 반영)
+
+    // 감면이 없을 때의 결정세액 (비교용)
+    var standardNoReduction = Math.min(STANDARD_CREDIT, Math.max(0, san - creditNormal));
+    var decisionNoReduction = Math.max(0, san - creditNormal - standardNoReduction);
+
+    var savedIncomeTax = Math.max(0, decisionNoReduction - decision); // 실제 소득세 절감
+    var savedLocalTax = Math.floor(savedIncomeTax * 0.1);             // 지방소득세 절감
+
+    return {
+      gross: gross,
+      nontax: nontax,
+      taxableGross: taxableGross,
+      earnedDeduction: earnedDeduction,
+      wageIncome: wageIncome,
+      insurance: ins,
+      incomeDeductions: incomeDeductions,
+      taxBase: taxBase,
+      san: san,
+      rate: rate,
+      reduction: reduction,
+      cappedByLimit: cappedByLimit,
+      creditNormal: creditNormal,
+      creditAdjusted: creditAdjusted,
+      standardCredit: standardCredit,
+      decision: decision,
+      decisionNoReduction: decisionNoReduction,
+      savedIncomeTax: savedIncomeTax,
+      savedLocalTax: savedLocalTax,
+      savedTotal: savedIncomeTax + savedLocalTax
+    };
+  }
+
+  globalThis.TaxCalc = {
+    compute: compute,
+    earnedIncomeDeduction: earnedIncomeDeduction,
+    taxOn: taxOn,
+    wageCreditRaw: wageCreditRaw,
+    wageCreditLimit: wageCreditLimit
+  };
+
+  /* ---------- 화면 ---------- */
+
+  if (typeof document === "undefined") return;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var won = function (n) { return Math.round(n).toLocaleString("ko-KR") + "원"; };
+  var num = function (n) { return Math.round(n).toLocaleString("ko-KR"); };
+
+  function readMan(id) {
+    var el = $(id);
+    var digits = String(el.value).replace(/[^\d]/g, "");
+    return digits === "" ? 0 : parseInt(digits, 10);
+  }
+  function writeMan(id, n) { $(id).value = n === 0 ? "0" : Number(n).toLocaleString("ko-KR"); }
+
+  var state = { mode: "annual", incomeMan: 3600 };
+
+  var CHIPS = {
+    annual: [3000, 3600, 4500, 6000],
+    monthly: [250, 300, 350, 400]
+  };
+
+  function renderChips() {
+    var box = $("incomeChips");
+    box.innerHTML = "";
+    CHIPS[state.mode].forEach(function (v) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = (state.mode === "annual" ? "연봉 " : "월급 ") + num(v) + "만";
+      b.addEventListener("click", function () {
+        state.incomeMan = v;
+        writeMan("income", v);
+        render();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function setMode(mode) {
+    var current = readMan("income");
+    if (mode === state.mode) return;
+    // 단위가 바뀌면 같은 급여 수준을 유지 (연봉 ↔ 월급)
+    var converted = mode === "monthly" ? Math.round(current / 12) : current * 12;
+    state.mode = mode;
+    state.incomeMan = converted;
+    writeMan("income", converted);
+    $("btnAnnual").setAttribute("aria-pressed", String(mode === "annual"));
+    $("btnMonthly").setAttribute("aria-pressed", String(mode === "monthly"));
+    $("incomeLabel").textContent = mode === "annual" ? "연봉 (세전, 비과세 포함)" : "월급 (세전, 비과세 포함)";
+    $("incomeHint").textContent = mode === "annual"
+      ? "계약서에 적힌 연봉 총액이에요. 비과세로 받는 식대·보조금도 이 안에 포함해서 넣어 주세요."
+      : "세전 월급이에요. ×12로 1년치를 계산합니다(상여금이 따로 있으면 연봉으로 넣는 게 정확해요).";
+    renderChips();
+    render();
+  }
+
+  function capWarn(id, valueMan, capMan, label) {
+    var el = $(id);
+    if (valueMan > capMan) {
+      el.textContent = "한도 " + capMan + "만 원을 넘어서 " + capMan + "만 원까지만 비과세로 계산했어요. 넘는 " +
+        num((valueMan - capMan) * 10000) + "원은 과세 급여에 더해집니다.";
+      el.classList.add("on");
+      return capMan;
+    }
+    el.textContent = "";
+    el.classList.remove("on");
+    return valueMan;
+  }
+
+  function render() {
+    var incomeMan = readMan("income");
+    var annualGross = state.mode === "annual" ? incomeMan * 10000 : incomeMan * 12 * 10000;
+
+    var kids = parseInt($("kids").value, 10) || 1;
+    var careCap = 20 * kids;
+
+    var mealMan = capWarn("mealWarn", readMan("meal"), 20);
+    var driveMan = capWarn("driveWarn", readMan("drive"), 20);
+    var careMan = capWarn("careWarn", readMan("care"), careCap);
+    var otherMan = readMan("other");
+
+    var monthlyNontax = (mealMan + driveMan + careMan) * 10000;
+    var annualNontax = monthlyNontax * 12 + otherMan * 10000;
+
+    var rate = document.querySelector('input[name="type"]:checked').value === "youth" ? 0.9 : 0.7;
+    var includeInsurance = $("useInsurance").checked;
+
+    var r = compute({
+      annualGross: annualGross,
+      nontaxAnnual: annualNontax,
+      rate: rate,
+      includeInsurance: includeInsurance
+    });
+
+    // 결과 카드
+    $("rGross").textContent = num(r.taxableGross);
+    $("rGrossSub").textContent = "비과세 " + won(r.nontax) + " 제외 · 월 평균 " + won(r.taxableGross / 12);
+    $("rDecision").textContent = won(r.decisionNoReduction);
+    $("rReductionNote").textContent = "산출세액의 " + (rate === 0.9 ? "90%" : "70%") + " · 연 200만 원 한도";
+    $("rReduction").textContent = "−" + won(r.reduction);
+    $("rFinal").textContent = num(r.decision);
+    $("rFinalSub").textContent = "월 평균 " + won(r.decision / 12) + " · 지방소득세 포함 " + won(r.decision * 1.1);
+    $("rLocal").textContent = won(r.savedLocalTax);
+    $("rSaved").textContent = won(r.savedTotal);
+
+    // 동적 안내
+    var msg = "";
+    if (r.taxableGross <= 0) {
+      msg = "급여를 입력하면 계산이 시작돼요.";
+    } else if (r.san <= 0) {
+      msg = "과세표준이 낮아 <strong>산출세액이 0원</strong>이에요. 이 구간은 감면받을 세금 자체가 없어서, 비과세를 더 챙기거나 공제를 챙길 필요도 없습니다.";
+    } else if (r.decision === 0) {
+      msg = "<strong>감면 덕분에 결정세액이 0원</strong>이에요. 이 구간에서는 카드·의료비·월세 세액공제를 더 챙겨도 돌려받을 세금이 늘지 않으니, 그 공제는 감면을 받지 않는 배우자·부모 쪽으로 넘기는 게 유리해요.";
+    } else if (r.reduction > r.decisionNoReduction) {
+      msg = "표시된 감면액은 산출세액 기준이라 실제 절감액(" + won(r.savedIncomeTax) + ")보다 커 보여요. 감면을 받으면 <strong>근로소득세액공제가 감면 비율만큼 줄어들기 때문</strong>이에요.";
+    } else if (r.cappedByLimit) {
+      msg = "감면 한도인 <strong>연 200만 원</strong>에 걸렸어요. 이 이상 급여가 올라가도 소득세 감면액은 200만 원에서 멈춥니다.";
+    } else {
+      msg = "예상치예요. 카드·의료비·월세 공제를 반영하면 실제 결정세액은 더 줄어들 수 있어요.";
+    }
+    $("noteFinal").innerHTML = msg;
+
+    // 상세 표
+    var rows = [
+      ["총급여 (세전 · 비과세 포함)", won(r.gross), "입력값" + (state.mode === "monthly" ? " × 12개월" : "")],
+      ["− 비과세 소득", "−" + won(r.nontax), "식대·보조금 등"],
+      ["= 과세 대상 총급여", won(r.taxableGross), ""],
+      ["− 근로소득공제", "−" + won(r.earnedDeduction), "소득세법 제47조"],
+      ["= 근로소득금액", won(r.wageIncome), ""]
+    ];
+    if (includeInsurance) {
+      rows.push(["− 4대보험료 (국민연금 " + num(r.insurance.pension) + " · 건강 " + num(r.insurance.health) +
+        " · 장기요양 " + num(r.insurance.ltc) + " · 고용 " + num(r.insurance.employ) + ")", "−" + won(r.insurance.total), "근로자 부담분"]);
+    }
+    rows.push(["− 기본공제 (본인)", "−" + won(BASIC_DEDUCTION), "부양가족은 미반영"]);
+    rows.push(["= 과세표준", won(r.taxBase), "1천 원 미만 절사"]);
+    rows.push(["산출세액", won(r.san), "기본세율 6~45%"]);
+    rows.push(["− 중소기업 소득세 감면 (" + (rate === 0.9 ? "90%" : "70%") + ")", "−" + won(r.reduction), r.cappedByLimit ? "연 200만 원 한도 적용" : "산출세액 × 감면율"]);
+    rows.push(["− 근로소득세액공제", "−" + won(r.creditAdjusted), "감면 비율 반영 후 (원래 " + won(r.creditNormal) + ")"]);
+    rows.push(["− 표준세액공제", "−" + won(r.standardCredit), "13만 원 한도, 남은 세액까지만"]);
+    rows.push(["= 결정세액", won(r.decision), "소득세"]);
+    rows.push(["지방소득세 (10%)", won(Math.floor(r.decision * 0.1)), "결정세액의 10%"]);
+
+    var html = "";
+    rows.forEach(function (row) {
+      html += "<tr><th>" + row[0] + (row[2] ? "<span class='src'>" + row[2] + "</span>" : "") +
+        "</th><td>" + row[1] + "</td></tr>";
+    });
+    html += "<tr class='sum'><th>감면이 없었다면 결정세액<span class='src'>비교용</span></th><td>" + won(r.decisionNoReduction) + "</td></tr>";
+    html += "<tr class='sum minus'><th>실제로 덜 내는 세금<span class='src'>소득세 " + won(r.savedIncomeTax) +
+      " + 지방소득세 " + won(r.savedLocalTax) + "</span></th><td>" + won(r.savedTotal) + "</td></tr>";
+    $("detailBody").innerHTML = html;
+  }
+
+  /* 이벤트 */
+  $("btnAnnual").addEventListener("click", function () { setMode("annual"); });
+  $("btnMonthly").addEventListener("click", function () { setMode("monthly"); });
+
+  ["income", "meal", "drive", "care", "other"].forEach(function (id) {
+    var el = $(id);
+    el.addEventListener("input", function () {
+      var digits = el.value.replace(/[^\d]/g, "");
+      var n = digits === "" ? 0 : parseInt(digits, 10);
+      if (n > 10000000) n = 10000000;
+      el.value = digits === "" ? "" : n.toLocaleString("ko-KR");
+      render();
+    });
+    el.addEventListener("blur", function () {
+      if (el.value === "") el.value = "0";
+      render();
+    });
+    el.addEventListener("focus", function () { el.select(); });
+  });
+
+  $("kids").addEventListener("change", render);
+  $("useInsurance").addEventListener("change", render);
+  document.querySelectorAll('input[name="type"]').forEach(function (el) {
+    el.addEventListener("change", render);
+  });
+
+  renderChips();
+  render();
+})();
+</script>
+</body>
+</html>
