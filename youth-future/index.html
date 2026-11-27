@@ -1067,7 +1067,6 @@
   }
 
   function syncContrib() {
-    var t = TYPES[state.type] || TYPES.custom;
     if (document.activeElement !== $("contribRate")) $("contribRate").value = String(state.contribRate);
     if (document.activeElement !== $("contribCap")) $("contribCap").value = num(state.contribCap);
     var mc = Math.min(state.monthly * (state.contribRate / 100), state.contribCap);
@@ -1075,7 +1074,7 @@
     $("contribTag").textContent = state.type === "custom"
       ? "직접 입력 " + state.contribRate + "%"
       : (state.contribRate > 0 ? "내 납입액의 " + state.contribRate + "%" : "기여금 없음");
-    if (state.type !== "custom") $("contribOut").title = t.label;
+    $("contribOut").removeAttribute("title");
   }
 
   function render() {
