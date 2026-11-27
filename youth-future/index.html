@@ -583,6 +583,7 @@
       b.addEventListener("click", function () {
         state.monthly = v;
         $("monthly").value = num(v / 10000);
+        $("monthlyWarn").classList.remove("on");
         syncChips();
         render();
       });
