@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>청년미래적금 만기 수령액 계산기 | 3년 · 정부기여금·비과세 반영</title>
-<meta name="description" content="월 납입액과 금리만 정하면 정부기여금(일반형 6%·우대형 12%)과 이자소득 비과세까지 넣은 3년 만기 수령액을 바로 계산합니다. 은행별 최고금리 14곳 프리셋 포함.">
+<title>청년미래적금 만기 수령액 계산기 | 은행별 우대금리 체크 · 금리 직접 입력</title>
+<meta name="description" content="월 납입액과 금리를 직접 넣어 정부기여금·비과세까지 반영한 3년 만기 수령액을 계산합니다. 14개 은행의 실제 공시 우대금리 항목을 체크하면 적용 금리가 바로 바뀌고, 기여금 비율·한도도 직접 조정할 수 있어요.">
 <meta property="og:title" content="청년미래적금 만기 수령액 계산기">
-<meta property="og:description" content="월 50만 원 × 3년, 정부기여금과 비과세까지 넣으면 얼마가 될까요?">
+<meta property="og:description" content="은행별 우대금리 체크리스트로 내가 받을 금리를 계산하고, 정부기여금까지 직접 조정해 보세요.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#FCF7EF">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23D9763C'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E2%82%A9%3C/text%3E%3C/svg%3E">
@@ -80,6 +80,7 @@
   .field + .field{margin-top:16px}
   .field label{display:block;font-size:.93rem;font-weight:650;margin-bottom:6px}
   .field .hint{margin:6px 0 0;font-size:.8rem;line-height:1.55;color:var(--sub)}
+  .hint{margin:6px 0 0;font-size:.8rem;line-height:1.55;color:var(--sub)}
   .limit{font-weight:600;color:var(--accent-deep);font-size:.78rem;background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-left:2px}
 
   .money{
@@ -92,6 +93,9 @@
     font-size:1.2rem;font-weight:700;letter-spacing:-0.02em;color:var(--ink);text-align:right;
   }
   .money .unit{flex:0 0 auto;font-size:.85rem;color:var(--sub)}
+  .money.small{padding:7px 10px;border-radius:11px}
+  .money.small input{font-size:.95rem;text-align:left}
+  .money.small .unit{font-size:.78rem}
   .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
   .chips button{
     appearance:none;cursor:pointer;font:inherit;font-size:.79rem;font-weight:600;color:var(--sub);
@@ -116,30 +120,78 @@
   .banks button[aria-pressed="true"]{border-color:var(--accent);background:#FFF8F2;box-shadow:0 0 0 3px rgba(217,118,60,.09)}
   .banks button[aria-pressed="true"] .r{color:var(--accent-deep)}
 
-  /* 금리 슬라이더 */
-  .rate-box{margin-top:16px;padding:16px;border-radius:16px;background:#fff;border:1.5px solid var(--line)}
-  .rate-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
+  /* 우대금리 체크리스트 */
+  .pref-panel{margin-top:14px;padding:15px 16px 13px;border-radius:16px;background:#fff;border:1.5px solid var(--line)}
+  .pref-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+  .pref-bank{display:block;font-size:.9rem;font-weight:750;letter-spacing:-0.02em}
+  .pref-src{display:block;font-size:.72rem;color:#9C8F82;font-weight:500;margin-top:1px;letter-spacing:0}
+  .pref-sum{
+    flex:0 0 auto;font-size:.8rem;font-weight:700;color:var(--accent-deep);background:var(--accent-soft);
+    border-radius:999px;padding:3px 11px;letter-spacing:0;font-variant-numeric:tabular-nums;
+  }
+  .pref-sum span{font-weight:600;color:#8E6B51}
+  .prefs{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .pref{
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:start;
+    padding:9px 10px;border:1.4px solid transparent;border-radius:11px;background:#FBF7F0;cursor:pointer;transition:.13s;
+  }
+  .pref:hover{border-color:#E4D3BE}
+  .pref input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent);flex:0 0 auto}
+  .pref-t{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.85rem;font-weight:700;letter-spacing:-0.01em}
+  .pref-d{display:block;font-size:.755rem;line-height:1.5;color:var(--sub);margin-top:2px}
+  .pref-rate{
+    flex:0 0 auto;font-size:.75rem;font-weight:800;color:var(--accent-deep);background:#fff;border:1px solid #F0D6BE;
+    border-radius:999px;padding:1px 7px;letter-spacing:0;font-variant-numeric:tabular-nums;align-self:start
+  }
+  .pref-mark{
+    font-size:.62rem;font-weight:700;letter-spacing:0;padding:1px 5px;border-radius:5px;
+    background:#EFE7DB;color:#7A6C5D;border:1px solid #E2D5C3;
+  }
+  .pref-mark.check{background:#FDF0E5;color:#A6552E;border-color:#EFD2BB}
+  .pref:has(input:checked){background:#FFF6EC;border-color:#EFCFB1}
+  .pref:has(input:checked) .pref-rate{background:var(--accent);border-color:var(--accent);color:#fff}
+  .pref-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .pref-note{margin:0;font-size:.73rem;line-height:1.55;color:#8E8175;letter-spacing:0}
+  .pref-btns{display:flex;gap:6px}
+  .pref-btns button{
+    appearance:none;cursor:pointer;font:inherit;font-size:.72rem;font-weight:600;color:var(--sub);
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 9px;
+  }
+  .pref-btns button:hover{border-color:var(--accent);color:var(--accent-deep)}
+  .pref-over{
+    margin:8px 0 0;padding:8px 10px;border-radius:9px;background:#FDF1E6;border:1px dashed #E4C3A3;
+    font-size:.74rem;line-height:1.5;color:#93461A;
+  }
+  .pref-over[hidden]{display:none}
+
+  /* 금리 직접 입력 */
+  .rate-box{margin-top:16px;padding:16px;border-radius:16px;background:linear-gradient(180deg,#FFFDFA,#FFF8F1);border:1.5px solid var(--line)}
+  .rate-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
   .rate-head .l{font-size:.86rem;font-weight:650}
-  .rate-head .v{font-size:1.28rem;font-weight:800;letter-spacing:-0.03em;color:var(--accent-deep);font-variant-numeric:tabular-nums}
-  .rate-head .v small{font-size:.62em;font-weight:700;color:var(--sub);margin-left:2px}
-  .rate-sub{margin:0 0 12px;font-size:.77rem;color:var(--sub)}
-  input[type="range"]{
-    -webkit-appearance:none;appearance:none;width:100%;height:26px;margin:0;background:transparent;cursor:pointer;
+  .rate-head .v{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--accent-deep);font-variant-numeric:tabular-nums}
+  .rate-head .v small{font-size:.6em;font-weight:700;color:var(--sub);margin-left:2px}
+  .rate-row{display:flex;align-items:stretch;gap:8px}
+  .rate-row .step{
+    flex:0 0 auto;width:42px;border:1.5px solid var(--line);border-radius:12px;background:#fff;
+    font:inherit;font-size:1.1rem;font-weight:700;color:var(--sub);cursor:pointer;
   }
-  input[type="range"]::-webkit-slider-runnable-track{
-    height:8px;border-radius:999px;
-    background:linear-gradient(90deg,var(--accent) 0%,var(--accent) var(--fill,100%),#F0E6D8 var(--fill,100%),#F0E6D8 100%);
+  .rate-row .step:hover{border-color:var(--accent);color:var(--accent-deep)}
+  .rate-field{
+    flex:1 1 auto;display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);
+    border-radius:12px;background:#fff;transition:border-color .16s, box-shadow .16s;
   }
-  input[type="range"]::-moz-range-track{height:8px;border-radius:999px;background:#F0E6D8}
-  input[type="range"]::-moz-range-progress{height:8px;border-radius:999px;background:var(--accent)}
-  input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-7px;border-radius:50%;
-    background:#fff;border:3px solid var(--accent);box-shadow:0 2px 6px rgba(90,64,40,.25);
+  .rate-field:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(217,118,60,.12)}
+  .rate-field input{
+    flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;
+    font:inherit;font-size:1.35rem;font-weight:800;letter-spacing:-0.02em;text-align:right;
+    font-variant-numeric:tabular-nums;color:var(--ink);
   }
-  input[type="range"]::-moz-range-thumb{
-    width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 2px 6px rgba(90,64,40,.25);
+  .rate-field .unit{font-size:.9rem;font-weight:700;color:var(--sub)}
+  .manual-note{
+    margin:8px 0 0;display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:0;
+    background:#FFF0DF;border:1px solid #EFCFB1;color:#9A4718;border-radius:999px;padding:2px 9px;
   }
-  .scale{display:flex;justify-content:space-between;font-size:.71rem;color:#9C8F82;margin-top:2px;letter-spacing:0}
+  .manual-note[hidden]{display:none}
 
   .types{display:grid;gap:10px}
   .type{
@@ -156,8 +208,17 @@
   .type .d{display:block;font-size:.79rem;color:var(--sub);line-height:1.5}
   .type:has(input:checked){border-color:var(--accent);background:#FFF8F2}
 
+  .contrib{margin-top:14px;padding:15px 16px;border-radius:16px;background:#fff;border:1.5px solid var(--line)}
+  .contrib-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .contrib-head .l{font-size:.86rem;font-weight:650}
+  .contrib-head .v{font-size:1.2rem;font-weight:800;letter-spacing:-0.03em;color:var(--green);font-variant-numeric:tabular-nums}
+  .contrib-grid{display:grid;gap:10px}
+  @media (min-width:520px){ .contrib-grid{grid-template-columns:1fr 1fr} }
+  .contrib-grid label{display:block;font-size:.78rem;font-weight:650;color:var(--sub);letter-spacing:0}
+  .contrib-grid .money{margin-top:4px}
+  .contrib-capnote{margin:8px 0 0;font-size:.74rem;color:#8E8175;line-height:1.5}
+
   .switch{display:flex;gap:12px;align-items:flex-start;padding-top:14px;margin-top:14px;border-top:1px dashed var(--line)}
-  .switch + .switch{margin-top:12px;padding-top:0;border-top:0}
   .switch input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--green);flex:0 0 auto}
   .switch label{cursor:pointer;display:block}
   .switch .t{display:block;font-size:.88rem;font-weight:650}
@@ -242,7 +303,7 @@
   <header>
     <p class="badge">2026년 11월 기준 · 3년 만기 자유적립식</p>
     <h1>청년미래적금<br><span class="mark">만기 수령액</span> 계산기</h1>
-    <p class="lede">매달 넣을 돈과 금리만 정하면, 정부기여금과 이자소득 비과세까지 넣은 <b>3년 뒤 만기 수령액</b>을 바로 보여줘요.</p>
+    <p class="lede">은행을 고르고 <b>내가 채울 수 있는 우대 항목만 체크</b>하면 적용 금리가 바로 나와요. 금리는 직접 입력할 수 있고, 정부기여금 비율과 월 한도도 손으로 조정해 볼 수 있어요.</p>
   </header>
 
   <main class="grid">
@@ -265,41 +326,51 @@
       </div>
 
       <div>
-        <h2 class="sec-title"><span class="num">2</span>적용 금리<span class="tag">기본 5.0% 고정</span></h2>
+        <h2 class="sec-title"><span class="num">2</span>적용 금리<span class="tag">기본 5.00% 고정</span></h2>
 
-        <p class="hint" style="margin:0 0 10px">은행을 고르면 그 은행의 <b>최고금리</b>가 잡혀요. 기본금리는 14곳 모두 연 5.0%, 차이는 우대금리(최대 2~3%p)에서 나요.</p>
+        <p class="hint" style="margin:0 0 10px">은행을 고르면 그 은행의 <b>공시 우대금리 항목</b>이 아래에 펼쳐져요. 실제로 채울 수 있는 항목만 체크하세요. 항목을 다 채우면 최고 연 7~8%, 못 채우면 그만큼 깎여요.</p>
         <div class="banks" id="banks" role="group" aria-label="취급 은행 선택"></div>
+
+        <div class="pref-panel" aria-live="polite">
+          <div class="pref-head">
+            <div>
+              <span class="pref-bank" id="prefBank">KB국민은행 우대금리</span>
+              <span class="pref-src" id="prefSrc">2026.11.27 상품안내 기준</span>
+            </div>
+            <span class="pref-sum">체크 합계 <b id="prefSum">3.00</b>%p <span id="prefCap">/ 한도 3.0%p</span></span>
+          </div>
+          <ul class="prefs" id="prefs"></ul>
+          <div class="pref-foot">
+            <p class="pref-note" id="prefNote">소득·재무상담은 14곳 공통 항목이에요.</p>
+            <div class="pref-btns">
+              <button type="button" id="prefAll">전체 체크</button>
+              <button type="button" id="prefNone">전체 해제</button>
+            </div>
+          </div>
+          <p class="pref-over" id="prefOver" hidden></p>
+        </div>
 
         <div class="rate-box">
           <div class="rate-head">
             <span class="l">최종 적용 금리</span>
-            <span class="v" id="rateOut">8.0<small>%</small></span>
+            <span class="v" id="rateOut">8.00<small>%</small></span>
           </div>
-          <p class="rate-sub" id="rateSub">기본 5.0% + 우대 3.0%p</p>
-          <input type="range" id="rateRange" min="0" max="3" step="0.1" value="3" aria-label="우대금리로 올릴 폭(%p)" aria-describedby="rateHint">
-          <div class="scale"><span>5.0%</span><span>우대금리 0~3%p</span><span id="rateScaleMax">8.0%</span></div>
-          <p class="hint" id="rateHint">우대 조건을 다 채우면 공시 최고금리가 되고, 못 채우면 그만큼 깎여요. 실제로 받는 금리에 가깝게 맞춰 보세요.</p>
+          <div class="rate-row" role="group" aria-label="연 이율 직접 입력">
+            <button type="button" class="step" id="rateMinus" aria-label="0.01%포인트 내리기">−</button>
+            <label class="rate-field" for="rateInput">
+              <input id="rateInput" type="number" inputmode="decimal" step="0.01" min="0" max="15" value="8.00" aria-label="연 이율 % 직접 입력">
+              <span class="unit">%</span>
+            </label>
+            <button type="button" class="step" id="ratePlus" aria-label="0.01%포인트 올리기">+</button>
+          </div>
+          <div class="chips" id="rateChips"></div>
+          <p class="hint" id="rateHint">연 이율을 직접 입력해도 돼요. 소수 둘째 자리까지(예: 6.75) 넣으면 그 금리로 바로 계산되고, 체크리스트를 다시 누르면 체크 합산 금리로 돌아와요.</p>
+          <p class="manual-note" id="manualNote" hidden>직접 입력한 금리로 계산 중</p>
         </div>
-
-        <div class="switch">
-          <input type="checkbox" id="prefIncome" checked>
-          <label for="prefIncome">
-            <span class="t">소득 우대 0.5%p</span>
-            <span class="d">가입 때 확인된 총급여가 3,600만 원(종합소득 2,600만 원) 이하일 때. 14곳 공통 항목이에요.</span>
-          </label>
-        </div>
-        <div class="switch">
-          <input type="checkbox" id="prefConsult" checked>
-          <label for="prefConsult">
-            <span class="t">청년재무상담 이수 0.2%p</span>
-            <span class="d">서민금융진흥원 청년재무상담을 이수하면 받아요. 이수 인정 기한은 은행마다 달라요.</span>
-          </label>
-        </div>
-        <p class="hint">이 두 항목은 은행별 우대금리 한도(2~3%p) <b>안에 포함</b>돼 있어요. 최고 8% 위에 0.7%p가 더 붙는 구조가 아니에요. 체크를 풀면 받을 수 있는 금리 폭이 그만큼 줄어요.</p>
       </div>
 
       <div>
-        <h2 class="sec-title"><span class="num">3</span>정부기여금 유형</h2>
+        <h2 class="sec-title"><span class="num">3</span>정부기여금 유형<span class="tag" id="contribTag">내 납입액의 6%</span></h2>
         <div class="types">
           <label class="type">
             <input type="radio" name="ctype" value="general" checked>
@@ -336,6 +407,35 @@
               <span class="d">2027년 예산안 기준 · 지방 소재 중소기업 재직 청년 신설 트랙, 국회 심의 중</span>
             </span>
           </label>
+          <label class="type">
+            <input type="radio" name="ctype" value="custom">
+            <span>
+              <span class="t">직접 입력 <span class="pill">비율·한도 조정</span></span>
+              <span class="d">아래 비율과 월 한도를 직접 고쳐서 계산해요. 숫자를 고치면 자동으로 이 유형이 선택돼요</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="contrib">
+          <div class="contrib-head">
+            <span class="l">지금 설정의 월 정부기여금</span>
+            <span class="v" id="contribOut">30,000원</span>
+          </div>
+          <div class="contrib-grid">
+            <label for="contribRate">기여금 비율
+              <span class="money small">
+                <input id="contribRate" type="number" inputmode="decimal" step="0.1" min="0" max="50" value="6">
+                <span class="unit">%</span>
+              </span>
+            </label>
+            <label for="contribCap">월 지원 한도
+              <span class="money small">
+                <input id="contribCap" type="text" inputmode="numeric" value="30,000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+          </div>
+          <p class="contrib-capnote">월 기여금 = 월 납입액 × 비율, 단 월 한도까지만. 위 유형을 고르면 자동으로 채워지고, 숫자를 고치면 '직접 입력'으로 바뀌어요.</p>
         </div>
         <p class="ref-badge" id="typeRef" hidden>※ 국회 확정 전 2027년 정부 예산안 기준 참고치입니다</p>
       </div>
@@ -346,7 +446,7 @@
     <aside class="card result" id="resultCard" aria-live="polite" aria-label="계산 결과">
       <p class="r-top">3년(36개월) 만기 예상 수령액</p>
       <p class="big"><span id="rTotal">21,383,250</span><span class="won">원</span></p>
-      <p class="r-sub" id="rSub">월 50만 원 × 36개월 · 연 8.0% · 일반형 6%</p>
+      <p class="r-sub" id="rSub">월 50만 원 × 36개월 · 연 8.00% · 일반형 6%</p>
       <p class="ref-badge" id="resultRef" hidden>※ 국회 확정 전 2027년 정부 예산안 기준 참고치입니다</p>
 
       <dl class="rows">
@@ -390,7 +490,8 @@
         <tbody>
           <tr><th>총 납입 원금<span class="src">월 납입액 × 36개월</span></th><td id="dPrincipal">18,000,000원</td></tr>
           <tr><th>비과세 이자<span class="src">월 납입액 × 연이율 × 55.5 (36개월 단리 합계)</span></th><td id="dInterest">2,220,000원</td></tr>
-          <tr><th>월 정부기여금<span class="src">월 납입액 × 매칭률, 월 한도까지만</span></th><td id="dMonthlyContrib">30,000원</td></tr>
+          <tr><th>적용 금리<span class="src" id="dRateSrc">기본 5.00% + 체크한 우대 3.00%p (한도 3.0%p)</span></th><td id="dRate">8.00%</td></tr>
+          <tr><th>월 정부기여금<span class="src" id="dContribSrc">월 납입액 × 6%, 월 한도 3만 원까지</span></th><td id="dMonthlyContrib">30,000원</td></tr>
           <tr><th>정부기여금 합계<span class="src">월 정부기여금 × 36개월</span></th><td id="dContrib">1,080,000원</td></tr>
           <tr><th>정부기여금 이자<span class="src">월 정부기여금 × 기본금리 5% × 55.5</span></th><td id="dContribInterest">83,250원</td></tr>
           <tr class="sum"><th>만기 수령액 합계</th><td id="dTotal">21,383,250원</td></tr>
@@ -402,6 +503,14 @@
 
   <!-- ===== 유의사항 ===== -->
   <section class="notes" aria-label="유의사항">
+    <div class="note-card">
+      <h3><span class="ico">🧾</span>우대금리 체크리스트는 공시된 항목만</h3>
+      <p>14개 은행의 상품설명서·공시(2026년 11월)에 적힌 항목과 우대폭만 그대로 옮겼어요. 항목별 인정 금액·개월 수는 은행마다 달라서, 체크 전에 요약 문구를 읽고 내 거래로 채울 수 있는지 확인하세요. 확인이 덜 된 곳(KB·하나·우리·NH·IBK·신한·iM·광주·전북·경남·우체국·카카오 외)은 '상품설명서 확인' 표시를 달았어요. 체크 합계가 그 은행 우대 한도를 넘으면 한도까지만 적용돼요.</p>
+    </div>
+    <div class="note-card">
+      <h3><span class="ico">✍️</span>금리·기여금 직접 입력</h3>
+      <p>적용 금리는 숫자칸에 직접 넣을 수 있어요(연 0.00~15.00%, 소수 둘째 자리). 우대 항목을 누르면 그 합산 금리가 칸에 다시 채워지고, 숫자를 고치면 그 금리로 바로 계산돼요. 정부기여금도 비율과 월 한도를 직접 바꿀 수 있어서, 확정 전 제도나 다른 조건을 가정해 볼 때 써요.</p>
+    </div>
     <div class="note-card">
       <h3><span class="ico">🧮</span>단리로 계산했어요</h3>
       <p>매달 같은 날 같은 금액을 넣는다고 보고 단리로 계산해요. 이자 = 월 납입액 × 연이율 × 55.5 (1개월치부터 36개월치까지 더한 값). 실제로는 납입일과 일수에 따라 일할 계산돼서 몇천 원~몇만 원 차이가 날 수 있어요.</p>
@@ -423,9 +532,10 @@
   <section class="basis" aria-label="기준과 공식 링크">
     <h3>기준과 공식 안내</h3>
     <ul>
-      <li>2026년 11월 기준 청년미래적금 상품 안내(금융위원회·서민금융진흥원)와 은행연합회 금리 비교공시를 참고했어요. 만 19~34세, 월 1,000원~50만 원, 3년 만기, 이자소득 비과세.</li>
+      <li>2026년 11월 기준 청년미래적금 상품 안내(금융위원회·서민금융진흥원)와 은행연합회 금리 비교공시, 각 은행 상품설명서를 참고했어요. 만 19~34세, 월 1,000원~50만 원, 3년 만기, 이자소득 비과세.</li>
+      <li>은행별 우대금리는 KB국민·NH농협·신한·우리·하나·IBK기업·iM·광주·전북·BNK경남·우체국·카카오뱅크 상품설명서와 BNK부산·Sh수협 공시 요약을 대조해 정리했어요. 한시 우대(우체국 2차 계좌개설 1.0%p, 우리 출시기념 0.3%p, 신한 2차 특별우대 1.0%p)는 기간이 지나면 빠져요.</li>
       <li>제가 계산한 값은 참고용이에요. 실제 만기 수령액은 가입한 은행의 상품 설명서와 만기 해지 시 정산 내역이 기준이에요.</li>
-      <li><a href="https://www.fsc.go.kr" target="_blank" rel="noopener">금융위원회 fsc.go.kr</a> · <a href="https://fill4young.kinfa.or.kr" target="_blank" rel="noopener">서민금융진흥원 청년미래적금 fill4young.kinfa.or.kr</a> · 서민금융 콜센터 1397</li>
+      <li><a href="https://www.fsc.go.kr" target="_blank" rel="noopener">금융위원회 fsc.go.kr</a> · <a href="https://fill4young.kinfa.or.kr" target="_blank" rel="noopener">서민금융진흥원 청년미래적금 fill4young.kinfa.or.kr</a> · <a href="https://portal.kfb.or.kr" target="_blank" rel="noopener">은행연합회 소비자포털</a> · 서민금융 콜센터 1397</li>
     </ul>
   </section>
 
@@ -448,47 +558,234 @@
   var MAX_MONTHLY = 500000;
   var TAX_RATE = 0.154;    // 일반 과세 적금 이자소득세 15.4%
   var MARKET_RATE = 0.035; // 비교용 시중 일반 적금 연 3.5%
+  var MIN_RATE = 0;
+  var MAX_RATE = 15;
 
-  // 취급기관 14곳 (2026-11-11 은행연합회 금리 비교공시 기준)
+  /* 공통 항목 (14곳 모두 제공) */
+  function incomePref() {
+    return { id: "income", name: "소득 우대", rate: 0.5, common: true,
+      cond: "가입 신청 시 확인된 총급여 3,600만 원(종합소득 2,600만 원) 이하 · 비과세소득만 있는 가입자는 미적용" };
+  }
+  function consultPref() {
+    return { id: "consult", name: "청년재무상담 이수", rate: 0.2, common: true,
+      cond: "서민금융진흥원 청년재무상담 이수 · 기한은 보통 만기월 3개월 전 말일까지" };
+  }
+
+  /* 취급기관 14곳 (2026년 2차 모집 상품설명서·공시 기준)
+     cap: 은행별 우대금리 한도(%p), prefs: 공시된 우대 항목 */
   var BANKS = [
-    { id: "ibk",   name: "IBK기업", max: 8.0 },
-    { id: "kb",    name: "KB국민", max: 8.0 },
-    { id: "nh",    name: "NH농협", max: 8.0 },
-    { id: "woori", name: "우리",    max: 8.0 },
-    { id: "shinhan", name: "신한",  max: 8.0 },
-    { id: "hana",  name: "하나",    max: 8.0 },
-    { id: "post",  name: "우체국",  max: 8.0 },
-    { id: "suhyup", name: "Sh수협", max: 7.0 },
-    { id: "im",    name: "iM뱅크",  max: 7.0 },
-    { id: "busan", name: "BNK부산", max: 7.0 },
-    { id: "gwangju", name: "광주",  max: 7.0 },
-    { id: "jeonbuk", name: "전북",  max: 7.0 },
-    { id: "gyeongnam", name: "BNK경남", max: 7.0 },
-    { id: "kakao", name: "카카오뱅크", max: 7.0 }
+    { id: "ibk", name: "IBK기업", cap: 3.0, src: "IBK 상품안내(2026.11.27)",
+      prefs: [
+        incomePref(),
+        { id: "salary", name: "급여이체", rate: 1.0,
+          cond: "IBK 입출식 계좌로 월 50만 원 이상 급여이체 24개월 이상" },
+        { id: "card", name: "카드이용", rate: 0.5,
+          cond: "IBK 신용·체크카드 월평균 30만 원 이상 + 만기까지 보유(결제계좌 IBK)" },
+        { id: "housing", name: "주택청약 보유", rate: 0.5,
+          cond: "만기 시점 IBK 주택청약종합저축 또는 청년 주택드림 청약통장 보유" },
+        { id: "sme", name: "중소기업 재직", rate: 0.3,
+          cond: "가입유형이 중소기업 재직자(우대)·신규취업자(우대)로 인정된 경우" },
+        { id: "first", name: "연계가입·최초고객", rate: 0.5,
+          cond: "IBK청년도약계좌 특별중도해지 후 연계가입 또는 최초고객(실명등록 3개월 이내·최근 6개월 총수신 평잔 0원)" },
+        consultPref()
+      ] },
+    { id: "kb", name: "KB국민", cap: 3.0, src: "KB 상품안내(2026.11.27)",
+      prefs: [
+        { id: "income", name: "소득플러스", rate: 0.5, common: true,
+          cond: "가입 신청 시 총급여 3,600만 원(종합소득 2,600만 원) 이하 · 비과세소득만 있는 가입자는 미적용" },
+        { id: "salary", name: "급여이체", rate: 1.0,
+          cond: "가입월~만기 전전월, KB 입출금통장으로 급여 입금 12개월 이상" },
+        { id: "outflow", name: "출금실적", rate: 0.8,
+          cond: "공과금 자동이체 월 2건 이상 12개월 / KB리브모바일 요금 출금 12개월 / KB카드 결제대금 출금 12개월 중 1개" },
+        { id: "audit", name: "거래감사", rate: 0.5,
+          cond: "KB청년도약계좌 가입 이력 / 최근 6개월 KB 예·적금 미보유 / KB모임통장 총무(모임원 2명 이상) 중 1개" },
+        consultPref()
+      ] },
+    { id: "nh", name: "NH농협", cap: 3.0, src: "NH 특약·상품설명서(2026.10.07 시행)",
+      prefs: [
+        incomePref(),
+        { id: "salary", name: "급여·가맹점대금", rate: 1.0,
+          cond: "가입월~만기 전전월, NH 입출식통장에 급여이체 또는 가맹점대금 18개월 이상 입금" },
+        { id: "card", name: "NH채움카드", rate: 0.7,
+          cond: "같은 기간 NH채움 신용·체크 승인실적 월평균 20만 원 이상(BC카드 제외)" },
+        { id: "asset", name: "자산형성", rate: 0.3,
+          cond: "가입 직전 1년간 NH 예·적금(청약 포함) 미보유 또는 청년도약계좌 연계가입" },
+        { id: "mydata", name: "NH마이데이터", rate: 0.3,
+          cond: "NH마이데이터 가입 + 2개 업권 이상 자산연결 18개월 이상 유지(NH은행·NH카드 제외)" },
+        consultPref()
+      ] },
+    { id: "woori", name: "우리", cap: 3.0, src: "우리 상품설명서(2026.10.07)",
+      prefs: [
+        { id: "income", name: "소득플러스", rate: 0.5, common: true,
+          cond: "가입 신청 시 총급여 3,600만 원(종합소득 2,600만 원) 이하 · 비과세소득만 있는 가입자는 미적용" },
+        { id: "salary", name: "소득입금", rate: 1.5,
+          cond: "우리 입출식 계좌로 급여이체(월 100만 원 이상) 18회 이상 또는 가맹점 매출대금 18회 이상" },
+        { id: "deal", name: "거래우대", rate: 0.5,
+          cond: "청년도약계좌 연계가입 또는 직전 6개월 우리 정기예금·적금(청약 제외) 미보유" },
+        { id: "life", name: "생활우대", rate: 0.5,
+          cond: "우리카드 월 10만 원 이상 18회 / 동양·ABL생명 보험료 18회 / 삼성월렛머니 충전 18회 / 우리WON모바일 통신비 자동납부 18회 중 1개" },
+        { id: "launch", name: "출시기념", rate: 0.3, flag: "한시",
+          cond: "2026년 12월 31일까지 가입대상 심사 신청 (기간 지나면 사라지는 우대)" },
+        consultPref()
+      ] },
+    { id: "shinhan", name: "신한", cap: 3.0, src: "신한 특약 + 2차 모집 공시(2026.10)",
+      prefs: [
+        { id: "income", name: "소득+", rate: 0.5, common: true,
+          cond: "가입 신청 시 총급여 3,600만 원(종합소득 2,600만 원) 이하 · 비과세소득만 있는 가입자는 미적용" },
+        { id: "salary", name: "소득이체", rate: 0.3,
+          cond: "신규 후 급여(건당 50만 원 이상) 또는 신한카드 가맹점 매출대금 18개월 이상 입금" },
+        { id: "card", name: "신한카드 결제", rate: 0.2,
+          cond: "신규 후 신한카드(신용·체크) 결제 실적 18개월 이상" },
+        { id: "stock", name: "증권거래", rate: 0.5,
+          cond: "신규 후 신한투자증권(은행연계 증권계좌) 거래 3개월 이상" },
+        { id: "first", name: "첫거래·연계가입", rate: 0.3,
+          cond: "신규 직전 6개월 신한 정기예금·정기적금 미보유 또는 청년도약계좌 연계가입" },
+        { id: "special", name: "소득이체 특별우대", rate: 1.0, flag: "상품설명서 확인",
+          cond: "2차 모집 특별우대: 신규 직전 6개월 신한에 급여·가맹점대금 입금 이력이 없고, 가입 후 18개월 이상 수령" },
+        consultPref()
+      ] },
+    { id: "hana", name: "하나", cap: 3.0, src: "하나 상품안내(2026.10.07)",
+      prefs: [
+        { id: "income", name: "소득플러스", rate: 0.5, common: true,
+          cond: "가입 신청 시 총급여 3,600만 원(종합소득 2,600만 원) 이하 · 비과세소득만 있는 가입자는 미적용" },
+        { id: "salary", name: "급여·가맹점대금", rate: 1.2,
+          cond: "가입 후 만기 전전월 말까지 하나 입출금통장으로 급여입금 또는 하나·BC카드 가맹점 결제대금 24회 이상(월 1회)" },
+        { id: "card", name: "하나카드 결제", rate: 0.6,
+          cond: "같은 기간 하나카드(신용·체크) 결제 24회 이상(하나머니 충전 제외)" },
+        { id: "nofund", name: "목돈마련 응원", rate: 0.5,
+          cond: "가입일 직전 1년간 예·적금 미보유(청년희망·도약·내일저축·미래적금은 제외)" },
+        { id: "consult", name: "청년재무상담 이수", rate: 0.2, common: true,
+          cond: "만기 전전월 말일까지 청년재무상담 이수 (다른 은행은 만기월 3개월 전 말일)" }
+      ] },
+    { id: "post", name: "우체국", cap: 3.0, src: "우체국 공시(2026.11)",
+      prefs: [
+        incomePref(),
+        { id: "first", name: "첫 적금거래·급여이체", rate: 0.5,
+          cond: "최근 6개월 우체국 적립식예금 가입·유지·해지 없음 또는 급여성 이체 12회 이상 (둘 중 하나, 중복 불가)" },
+        { id: "auto", name: "적금 자동이체", rate: 0.4,
+          cond: "월 1만 원 이상 자동이체 약정 후 18회 이상 납입" },
+        { id: "card", name: "체크카드 이용", rate: 0.4,
+          cond: "가입월 포함 3개월이 지난 달까지 체크카드 합산 20만 원 이상" },
+        { id: "event", name: "2차 계좌개설 이벤트", rate: 1.0, flag: "한시",
+          cond: "2026.11.16~27 기간에 계좌를 개설한 만기계좌 (거래실적 조건 없음)" },
+        consultPref()
+      ] },
+    { id: "suhyup", name: "Sh수협", cap: 2.0, src: "수협 공시 요약(2026.11) · 세부는 상품설명서 확인", check: true,
+      prefs: [
+        incomePref(),
+        { id: "salary", name: "급여이체", rate: 0.5, flag: "상품설명서 확인",
+          cond: "건당 50만 원 이상 급여이체 20개월 이상" },
+        { id: "card", name: "수협카드 결제", rate: 0.6, flag: "상품설명서 확인",
+          cond: "수협카드 결제대금 월 10만 원 이상 출금 20개월 이상" },
+        { id: "mkt", name: "마케팅 동의", rate: 0.2, flag: "상품설명서 확인",
+          cond: "안내수단 전체 동의를 만기 해지까지 유지" },
+        consultPref()
+      ] },
+    { id: "im", name: "iM뱅크", cap: 2.0, src: "iM 상품설명서·특약(2026.06.22)",
+      prefs: [
+        incomePref(),
+        { id: "new", name: "신규·거래이력", rate: 0.3,
+          cond: "고객정보 최초 등록 3개월 이내 또는 가입 직전월 말 기준 최근 6개월 총수신 평균잔액 0원" },
+        { id: "auto", name: "자동이체", rate: 0.3,
+          cond: "iM 입출금계좌에서 이 적금으로 자동이체 24개월 이상(월 1회)" },
+        { id: "salary", name: "급여이체", rate: 0.3,
+          cond: "월 50만 원 이상 급여이체 24개월 이상(본인 계좌 이체 제외)" },
+        { id: "card", name: "iM뱅크BC카드", rate: 0.3,
+          cond: "BC 신용·체크 결제금액 월 10만 원 이상인 달 24개월 이상" },
+        { id: "mkt", name: "마케팅 동의", rate: 0.1,
+          cond: "가입 전 상품서비스 안내수단 전체 항목 동의" },
+        consultPref()
+      ] },
+    { id: "busan", name: "BNK부산", cap: 2.0, src: "부산은행 공시 요약(2026.11) · 세부는 상품설명서 확인", check: true,
+      prefs: [
+        incomePref(),
+        { id: "salary", name: "급여이체", rate: 0.5, flag: "상품설명서 확인",
+          cond: "가입 후 18개월 이상 급여이체 실적(만기 전전월 말까지 인정)" },
+        { id: "card", name: "부산BC카드", rate: 0.5, flag: "상품설명서 확인",
+          cond: "부산은행 BC 신용·체크카드 누적 300만 원 이상 이용" },
+        { id: "housing", name: "주택청약 보유", rate: 0.3, flag: "상품설명서 확인",
+          cond: "만기 해지 시 본인 명의 부산은행 주택청약종합저축 또는 청년주택드림청약통장 보유" },
+        consultPref()
+      ] },
+    { id: "gwangju", name: "광주", cap: 2.0, src: "광주은행(KJB) 상품안내(2026.10.07)",
+      prefs: [
+        incomePref(),
+        { id: "first", name: "첫거래·연계가입", rate: 0.5,
+          cond: "가입 전일 기준 최근 1년 광주은행 예·적금 보유·신규·해지 이력 없음 또는 KJB청년도약계좌 연계가입" },
+        { id: "salary", name: "급여이체", rate: 0.3,
+          cond: "급여성 입금 건당 50만 원 이상 30회 이상(월 1회, 본인 계좌 이체 제외)" },
+        { id: "auto", name: "적금 자동이체", rate: 0.2,
+          cond: "가입일~만기 전전월, 자동이체 20회 이상(월 1회, 최초 가입금 제외)" },
+        { id: "deposit", name: "정기예금 보유", rate: 0.3,
+          cond: "계약기간 1년 이상 원화 정기예금 1천만 원 이상 신규 가입 후 만기해지 이력" },
+        consultPref()
+      ] },
+    { id: "jeonbuk", name: "전북", cap: 2.0, src: "JB 상품안내(2026.10)",
+      prefs: [
+        incomePref(),
+        { id: "salary", name: "급여·가맹점대금", rate: 0.5,
+          cond: "18개월 이상 입금 (급여 건당 50만 원 이상 / 가맹점대금 월 50만 원 이상)" },
+        { id: "card", name: "JB카드 이용", rate: 0.3,
+          cond: "전북은행 신용·체크카드 매입(사용) 실적 18개월 이상" },
+        { id: "auto", name: "적금 자동이체", rate: 0.3,
+          cond: "전북은행 계좌 간 자동이체로 18개월 이상 납입(타행 이체는 미인정)" },
+        { id: "mkt", name: "마케팅 동의", rate: 0.2,
+          cond: "상품·서비스 안내 전체 동의" },
+        consultPref()
+      ] },
+    { id: "gyeongnam", name: "BNK경남", cap: 2.0, src: "경남은행 상품안내(2026.11.27)",
+      prefs: [
+        incomePref(),
+        { id: "cheer", name: "청년미래 응원금리", rate: 0.3,
+          cond: "이 적금에 가입(연계가입 포함)하는 모든 고객" },
+        { id: "salary", name: "급여·가맹점대금", rate: 0.7,
+          cond: "가입기간의 1/2 이상 급여 또는 가맹점 결제대금 입금(급여는 지정일 전후 10영업일 내 50만 원 이상)" },
+        { id: "card", name: "카드 이용", rate: 0.2,
+          cond: "가입월 포함 3개월간 신용·체크카드 합산 10만 원 이상" },
+        { id: "new", name: "신규고객", rate: 0.2,
+          cond: "가입일 기준 직전 1년간 경남은행 예·적금 신규·해지 이력 없음" },
+        { id: "mkt", name: "마케팅 동의", rate: 0.1,
+          cond: "가입 전 은행마케팅·모바일메시지 동의" },
+        consultPref()
+      ] },
+    { id: "kakao", name: "카카오뱅크", cap: 2.0, src: "카카오뱅크 상품안내(2026.11)",
+      prefs: [
+        incomePref(),
+        { id: "new", name: "최초 신규", rate: 0.7,
+          cond: "청년미래적금 가입 2개월 이내 카카오뱅크 입출금통장 최초 개설(가입일 당일·2개월 전 해당일 포함)" },
+        { id: "card50", name: "체크카드 월 50만 원", rate: 0.6, group: "card",
+          cond: "24개월 동안 매달 카카오뱅크 체크카드 50만 원 이상 (30만 원 항목과 중복 불가)" },
+        { id: "card30", name: "체크카드 월 30만 원", rate: 0.3, group: "card",
+          cond: "24개월 동안 매달 카카오뱅크 체크카드 30만 원 이상 (50만 원 항목과 중복 불가)" },
+        consultPref()
+      ] }
   ];
 
-  // 정부기여금 유형
+  /* 정부기여금 유형 */
   var TYPES = {
     general:   { rate: 6,  cap: 30000,  label: "일반형 6%" },
     preferred: { rate: 12, cap: 60000,  label: "우대형 12%" },
     none:      { rate: 0,  cap: 0,      label: "기여금 없음(비과세만)" },
     p15:       { rate: 15, cap: 75000,  label: "우대형 15% (2027 예산안)" },
-    p25:       { rate: 25, cap: 125000, label: "비수도권 중소기업 25% (2027 예산안)" }
+    p25:       { rate: 25, cap: 125000, label: "비수도권 중소기업 25% (2027 예산안)" },
+    custom:    { rate: 6,  cap: 30000,  label: "직접 입력" }
   };
   var PLAN_TYPES = { p15: true, p25: true };
 
   /* ---------- 계산 (순수 함수) ---------- */
   /**
-   * @param {{monthly:number, rate:number, type:string}} input  rate는 퍼센트(예: 8.0)
+   * @param {{monthly:number, rate:number, contribRate:number, contribCap:number}} input
+   *        rate·contribRate는 퍼센트(예: 8.0), contribCap은 원
    */
   function compute(input) {
     var monthly = Math.max(0, Math.round(input.monthly || 0));
     var rate = Math.max(0, input.rate || 0) / 100;
-    var t = TYPES[input.type] || TYPES.general;
+    var cRate = Math.max(0, input.contribRate || 0) / 100;
+    var cCap = Math.max(0, input.contribCap || 0);
 
     var principal = monthly * MONTHS;
     var interest = monthly * rate * SUM_MONTHS;
-    var monthlyContrib = Math.min(monthly * (t.rate / 100), t.cap);
+    var monthlyContrib = Math.min(monthly * cRate, cCap);
     var contribution = monthlyContrib * MONTHS;
     var contribInterest = monthlyContrib * (BASE_RATE / 100) * SUM_MONTHS;
     var total = principal + interest + contribution + contribInterest;
@@ -503,7 +800,6 @@
     return {
       monthly: monthly,
       rate: rate * 100,
-      type: input.type,
       principal: r0(principal),
       interest: r0(interest),
       monthlyContrib: r0(monthlyContrib),
@@ -516,7 +812,7 @@
     };
   }
 
-  globalThis.YouthFutureCalc = { compute: compute, TYPES: TYPES, BANKS: BANKS };
+  globalThis.YouthFutureCalc = { compute: compute, BANKS: BANKS, TYPES: TYPES };
 
   /* ---------- 화면 ---------- */
   if (typeof document === "undefined") return;
@@ -524,25 +820,60 @@
   var $ = function (id) { return document.getElementById(id); };
   var won = function (n) { return Math.round(n).toLocaleString("ko-KR") + "원"; };
   var num = function (n) { return Math.round(n).toLocaleString("ko-KR"); };
-  var one = function (n) { return (Math.round(n * 10) / 10).toFixed(1); };
+  var two = function (n) { return (Math.round(n * 100) / 100).toFixed(2); };
+
+  function bankById(id) {
+    for (var i = 0; i < BANKS.length; i++) if (BANKS[i].id === id) return BANKS[i];
+    return BANKS[0];
+  }
 
   var state = {
     monthly: 500000,
     bank: "kb",
-    pref: 3.0,           // 우대금리 %p (0 ~ 한도)
-    prefIncome: true,
-    prefConsult: true,
-    type: "general"
+    rate: 8.0,            // 화면에서 쓰는 최종 적용 금리(%)
+    manual: false,        // 금리를 직접 입력했는지
+    checks: {},           // { bankId: { prefId: true/false } }
+    type: "general",
+    contribRate: 6,
+    contribCap: 30000
   };
 
-  function bankCap() {
-    var b = BANKS.filter(function (x) { return x.id === state.bank; })[0];
-    return b ? b.max - BASE_RATE : 3;
+  function defaultChecks(bank) {
+    var map = {};
+    var grouped = {};
+    bank.prefs.forEach(function (p) {
+      if (p.group) {
+        // 같은 그룹은 우대폭이 큰 항목만 기본 체크
+        if (grouped[p.group] === undefined || p.rate > grouped[p.group]) {
+          if (grouped[p.group] !== undefined) map[grouped[p.group]] = false;
+          grouped[p.group] = p.id;
+        } else {
+          map[p.id] = false;
+          return;
+        }
+      }
+      map[p.id] = true;
+    });
+    return map;
   }
-  function availableMax() {
-    return Math.round((bankCap()
-      - (state.prefIncome ? 0 : 0.5)
-      - (state.prefConsult ? 0 : 0.2)) * 10) / 10;
+
+  function checksOf(bank) {
+    if (!state.checks[bank.id]) state.checks[bank.id] = defaultChecks(bank);
+    return state.checks[bank.id];
+  }
+
+  function checkedSum(bank) {
+    var ch = checksOf(bank);
+    var sum = 0;
+    bank.prefs.forEach(function (p) { if (ch[p.id]) sum += p.rate; });
+    return Math.round(sum * 100) / 100;
+  }
+
+  function applyFromChecks() {
+    var bank = bankById(state.bank);
+    var sum = Math.min(checkedSum(bank), bank.cap);
+    state.rate = Math.round((BASE_RATE + sum) * 100) / 100;
+    state.manual = false;
   }
 
   function buildBanks() {
@@ -552,15 +883,13 @@
       btn.type = "button";
       btn.dataset.bank = b.id;
       btn.setAttribute("aria-pressed", String(b.id === state.bank));
-      btn.innerHTML = '<span class="b">' + b.name + '</span><span class="r">최고 연 ' + one(b.max) + '%</span>';
+      btn.innerHTML = '<span class="b">' + b.name + '</span><span class="r">최고 연 ' +
+        (BASE_RATE + b.cap).toFixed(1) + '%</span>';
       btn.addEventListener("click", function () {
         state.bank = b.id;
-        state.pref = Math.round((b.max - BASE_RATE) * 10) / 10;
-        state.prefIncome = true;
-        state.prefConsult = true;
-        $("prefIncome").checked = true;
-        $("prefConsult").checked = true;
+        applyFromChecks();
         syncBanks();
+        buildPrefs();
         syncRate();
         render();
       });
@@ -571,6 +900,101 @@
     Array.prototype.forEach.call($("banks").children, function (btn) {
       btn.setAttribute("aria-pressed", String(btn.dataset.bank === state.bank));
     });
+  }
+
+  function buildPrefs() {
+    var bank = bankById(state.bank);
+    var ch = checksOf(bank);
+    var box = $("prefs");
+    box.innerHTML = "";
+
+    $("prefBank").textContent = bank.name + " 우대금리";
+    $("prefSrc").textContent = bank.src;
+    $("prefCap").textContent = "/ 한도 " + bank.cap.toFixed(1) + "%p";
+
+    bank.prefs.forEach(function (p) {
+      var li = document.createElement("li");
+      var lab = document.createElement("label");
+      lab.className = "pref";
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!ch[p.id];
+      cb.setAttribute("aria-label", p.name + " +" + p.rate + "%p");
+
+      var main = document.createElement("span");
+      var t = document.createElement("span");
+      t.className = "pref-t";
+      t.textContent = p.name;
+      if (p.common) {
+        var cm = document.createElement("span");
+        cm.className = "pref-mark";
+        cm.textContent = "공통";
+        t.appendChild(cm);
+      }
+      if (p.flag) {
+        var fm = document.createElement("span");
+        fm.className = "pref-mark check";
+        fm.textContent = p.flag;
+        t.appendChild(fm);
+      }
+      var d = document.createElement("span");
+      d.className = "pref-d";
+      d.textContent = p.cond;
+      main.appendChild(t);
+      main.appendChild(d);
+
+      var rt = document.createElement("span");
+      rt.className = "pref-rate";
+      rt.textContent = "+" + p.rate.toFixed(1) + "%p";
+
+      lab.appendChild(cb);
+      lab.appendChild(main);
+      lab.appendChild(rt);
+      li.appendChild(lab);
+      box.appendChild(li);
+
+      cb.addEventListener("change", function () {
+        if (p.group && cb.checked) {
+          // 같은 그룹(예: 카카오뱅크 체크카드 30만·50만)은 하나만
+          bank.prefs.forEach(function (o) {
+            if (o.group === p.group && o.id !== p.id) ch[o.id] = false;
+          });
+        }
+        ch[p.id] = cb.checked;
+        applyFromChecks();
+        rebuildChecksUI();
+        syncRate();
+        render();
+      });
+    });
+
+    $("prefNote").textContent = bank.check
+      ? "※ 세부 인정 금액·기간은 " + bank.name + " 상품설명서에서 확인하세요."
+      : "※ 소득·재무상담은 14곳 공통 항목이에요.";
+
+    rebuildChecksUI();
+  }
+
+  /* 체크 상태만 화면에 반영 (목록을 다시 그리지 않음) */
+  function rebuildChecksUI() {
+    var bank = bankById(state.bank);
+    var ch = checksOf(bank);
+    var list = $("prefs").children;
+    for (var i = 0; i < list.length; i++) {
+      var cb = list[i].querySelector("input");
+      cb.checked = !!ch[bank.prefs[i].id];
+    }
+    var sum = checkedSum(bank);
+    $("prefSum").textContent = two(sum);
+    var over = $("prefOver");
+    if (sum > bank.cap + 0.0001) {
+      over.hidden = false;
+      over.textContent = "체크한 항목을 다 더하면 " + two(sum) + "%p지만, 이 은행 우대 한도가 " +
+        bank.cap.toFixed(1) + "%p라 " + bank.cap.toFixed(1) + "%p까지만 적용돼요.";
+    } else {
+      over.hidden = true;
+    }
   }
 
   function buildChips() {
@@ -590,50 +1014,94 @@
       box.appendChild(b);
     });
     syncChips();
+
+    var rbox = $("rateChips");
+    [5.0, 6.0, 6.75, 7.0, 8.0].forEach(function (v) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.dataset.rate = v;
+      b.textContent = v.toFixed(2) + "%";
+      b.addEventListener("click", function () {
+        state.rate = v;
+        state.manual = true;
+        syncRate();
+        render();
+      });
+      rbox.appendChild(b);
+    });
+    syncRateChips();
   }
   function syncChips() {
     Array.prototype.forEach.call($("monthlyChips").children, function (btn) {
       btn.setAttribute("aria-pressed", String(Number(btn.dataset.v) === state.monthly));
     });
   }
+  function syncRateChips() {
+    Array.prototype.forEach.call($("rateChips").children, function (btn) {
+      btn.setAttribute("aria-pressed", String(Math.abs(Number(btn.dataset.rate) - state.rate) < 0.005));
+    });
+  }
 
   function syncRate() {
-    var max = availableMax();
-    var range = $("rateRange");
-    if (state.pref > max) state.pref = max;
-    range.max = String(max);
-    range.value = String(state.pref);
-    var pct = max > 0 ? (state.pref / max) * 100 : 0;
-    range.style.setProperty("--fill", pct + "%");
-
-    var rate = BASE_RATE + state.pref;
-    $("rateOut").innerHTML = one(rate) + "<small>%</small>";
-    $("rateSub").textContent = "기본 " + one(BASE_RATE) + "% + 우대 " + one(state.pref) + "%p";
-    $("rateScaleMax").textContent = one(BASE_RATE + max) + "%";
+    var bank = bankById(state.bank);
+    var sum = Math.min(checkedSum(bank), bank.cap);
+    $("rateOut").innerHTML = two(state.rate) + "<small>%</small>";
+    if (document.activeElement !== $("rateInput")) $("rateInput").value = two(state.rate);
+    $("manualNote").hidden = !state.manual;
+    if (state.manual) {
+      $("rateHint").textContent = "직접 넣은 금리로 계산하고 있어요. 아래 체크리스트를 누르면 체크 합산 금리로 다시 바뀌어요.";
+    } else {
+      $("rateHint").textContent = "기본 " + two(BASE_RATE) + "% + 체크한 우대 " + two(sum) + "%p = " + two(state.rate) +
+        "% (한도 " + bank.cap.toFixed(1) + "%p). 숫자를 직접 고쳐도 돼요.";
+    }
+    syncRateChips();
   }
 
   function readMonthly() {
     var digits = String($("monthly").value).replace(/[^\d]/g, "");
     return digits === "" ? 0 : parseInt(digits, 10);
   }
+  function readCap() {
+    var digits = String($("contribCap").value).replace(/[^\d]/g, "");
+    return digits === "" ? 0 : parseInt(digits, 10);
+  }
+
+  function syncContrib() {
+    var t = TYPES[state.type] || TYPES.custom;
+    if (document.activeElement !== $("contribRate")) $("contribRate").value = String(state.contribRate);
+    if (document.activeElement !== $("contribCap")) $("contribCap").value = num(state.contribCap);
+    var mc = Math.min(state.monthly * (state.contribRate / 100), state.contribCap);
+    $("contribOut").textContent = won(mc);
+    $("contribTag").textContent = state.type === "custom"
+      ? "직접 입력 " + state.contribRate + "%"
+      : (state.contribRate > 0 ? "내 납입액의 " + state.contribRate + "%" : "기여금 없음");
+    if (state.type !== "custom") $("contribOut").title = t.label;
+  }
 
   function render() {
-    var res = compute({ monthly: state.monthly, rate: BASE_RATE + state.pref, type: state.type });
-    var t = TYPES[state.type];
+    var res = compute({
+      monthly: state.monthly,
+      rate: state.rate,
+      contribRate: state.contribRate,
+      contribCap: state.contribCap
+    });
+    var t = TYPES[state.type] || TYPES.custom;
+    var typeLabel = state.type === "custom"
+      ? "직접 입력 " + state.contribRate + "% (월 " + num(state.contribCap) + "원 한도)"
+      : (t.rate > 0 ? t.label.replace(/ \(.*\)$/, "") : "기여금 없음");
 
     $("rTotal").textContent = num(res.total);
-    $("rSub").textContent = "월 " + num(res.monthly / 10000) + "만 원 × 36개월 · 연 " + one(res.rate) + "% · " +
-      (t.rate > 0 ? t.label.replace(/ \(.*\)$/, "") : "기여금 없음");
+    $("rSub").textContent = "월 " + num(res.monthly / 10000) + "만 원 × 36개월 · 연 " + two(res.rate) + "% · " + typeLabel;
 
     $("rPrincipal").textContent = won(res.principal);
     $("rInterest").textContent = won(res.interest);
     $("rContrib").textContent = won(res.contribution);
-    $("rContribNote").textContent = t.rate > 0
+    $("rContribNote").textContent = state.contribRate > 0
       ? "월 " + won(res.monthlyContrib) + " × 36개월"
       : "총급여 6,000만 원 초과~7,500만 원 이하";
     $("rContribInterest").textContent = won(res.contribInterest);
     $("rExtra").textContent = won(res.extra);
-    $("rEqRate").textContent = one(res.eqRate);
+    $("rEqRate").textContent = (Math.round(res.eqRate * 10) / 10).toFixed(1);
 
     var more = res.extra - res.marketNet;
     $("rVs").innerHTML = "시중 <b>연 3.5% 일반 적금</b>(세후)에 같은 돈을 넣으면 약 " + won(res.marketNet) +
@@ -645,13 +1113,26 @@
     $("resultRef").hidden = !isPlan;
 
     // 상세 표
+    var bank = bankById(state.bank);
+    var sum = Math.min(checkedSum(bank), bank.cap);
     $("dPrincipal").textContent = won(res.principal);
     $("dInterest").textContent = won(res.interest);
+    $("dRate").textContent = two(res.rate) + "%";
+    $("dRateSrc").textContent = state.manual
+      ? "직접 입력한 금리"
+      : "기본 " + two(BASE_RATE) + "% + 체크한 우대 " + two(sum) + "%p (한도 " + bank.cap.toFixed(1) + "%p)";
     $("dMonthlyContrib").textContent = won(res.monthlyContrib);
+    $("dContribSrc").textContent = "월 납입액 × " + (Math.round(state.contribRate * 10) / 10) + "%, 월 한도 " + num(state.contribCap) + "원까지";
     $("dContrib").textContent = won(res.contribution);
     $("dContribInterest").textContent = won(res.contribInterest);
     $("dTotal").textContent = won(res.total);
-    $("dEqRate").textContent = one(res.eqRate) + "%";
+    $("dEqRate").textContent = (Math.round(res.eqRate * 10) / 10).toFixed(1) + "%";
+
+    // 기여금 영역
+    $("contribTag").textContent = state.type === "custom"
+      ? "직접 입력 " + state.contribRate + "%"
+      : (state.contribRate > 0 ? "내 납입액의 " + state.contribRate + "%" : "기여금 없음");
+    $("contribOut").textContent = won(res.monthlyContrib);
   }
 
   /* ---------- 이벤트 ---------- */
@@ -661,6 +1142,7 @@
     $("monthlyWarn").classList.remove("on");
     state.monthly = Math.min(MAX_MONTHLY, Math.max(0, v) * 10000);
     syncChips();
+    syncContrib();
     render();
   });
   monthlyEl.addEventListener("blur", function () {
@@ -678,26 +1160,55 @@
       w.classList.remove("on");
     }
     syncChips();
+    syncContrib();
     render();
   });
 
-  $("rateRange").addEventListener("input", function () {
-    state.pref = Math.round(parseFloat(this.value) * 10) / 10;
+  function setRate(v, manual) {
+    state.rate = Math.min(MAX_RATE, Math.max(MIN_RATE, Math.round(v * 100) / 100));
+    state.manual = manual;
     syncRate();
     render();
-  });
+  }
 
-  $("prefIncome").addEventListener("change", function () {
-    state.prefIncome = this.checked;
-    var max = availableMax();
-    state.pref = Math.min(state.pref, max);
+  $("rateInput").addEventListener("input", function () {
+    var v = parseFloat(String(this.value).replace(",", "."));
+    if (isNaN(v)) return;
+    setRate(v, true);
+  });
+  $("rateInput").addEventListener("blur", function () {
+    if (String(this.value).trim() === "" || isNaN(parseFloat(this.value))) {
+      applyFromChecks();
+      syncRate();
+      render();
+    } else {
+      setRate(parseFloat(this.value), true);
+    }
+  });
+  $("rateMinus").addEventListener("click", function () { setRate(state.rate - 0.01, true); });
+  $("ratePlus").addEventListener("click", function () { setRate(state.rate + 0.01, true); });
+
+  $("prefAll").addEventListener("click", function () {
+    var bank = bankById(state.bank);
+    var ch = checksOf(bank);
+    var best = {};
+    bank.prefs.forEach(function (p) {
+      if (p.group && (best[p.group] === undefined || p.rate > best[p.group].rate)) best[p.group] = p;
+    });
+    bank.prefs.forEach(function (p) {
+      ch[p.id] = p.group ? (best[p.group].id === p.id) : true;
+    });
+    applyFromChecks();
+    rebuildChecksUI();
     syncRate();
     render();
   });
-  $("prefConsult").addEventListener("change", function () {
-    state.prefConsult = this.checked;
-    var max = availableMax();
-    state.pref = Math.min(state.pref, max);
+  $("prefNone").addEventListener("click", function () {
+    var bank = bankById(state.bank);
+    var ch = checksOf(bank);
+    bank.prefs.forEach(function (p) { ch[p.id] = false; });
+    applyFromChecks();
+    rebuildChecksUI();
     syncRate();
     render();
   });
@@ -706,13 +1217,45 @@
     r.addEventListener("change", function () {
       if (!this.checked) return;
       state.type = this.value;
+      if (state.type !== "custom") {
+        state.contribRate = TYPES[state.type].rate;
+        state.contribCap = TYPES[state.type].cap;
+        syncContrib();
+      }
       render();
     });
   });
 
+  function customFromInputs() {
+    state.type = "custom";
+    var cr = document.querySelector('input[name="ctype"][value="custom"]');
+    if (cr) cr.checked = true;
+    syncContrib();
+    render();
+  }
+  $("contribRate").addEventListener("input", function () {
+    var v = parseFloat(this.value);
+    if (isNaN(v)) return;
+    state.contribRate = Math.min(50, Math.max(0, Math.round(v * 10) / 10));
+    customFromInputs();
+  });
+  $("contribRate").addEventListener("blur", function () {
+    this.value = String(state.contribRate);
+  });
+  $("contribCap").addEventListener("input", function () {
+    state.contribCap = Math.max(0, readCap());
+    customFromInputs();
+  });
+  $("contribCap").addEventListener("blur", function () {
+    this.value = num(state.contribCap);
+  });
+
   buildBanks();
   buildChips();
+  buildPrefs();
+  applyFromChecks();
   syncRate();
+  syncContrib();
   render();
 })();
 </script>
